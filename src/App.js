@@ -12,23 +12,43 @@ const App = () => {
   const { order, setOrder } = useState({});
   const [errorMessage, setErrorMessage] = useState("");
 
+  // const handleAddToCart = async (productId, quantity) => {
+  //   const cart = await commerce.cart.add(productId, quantity);
+  //   setCart({
+  //     total_items: cart.total_items + 1,
+  //     line_items: [...cart.line_items, cart],
+  //   });
+  // };
   const handleAddToCart = async (productId, quantity) => {
-    const { cart } = await commerce.cart.add(productId, quantity);
-    setCart(cart);
+    try {
+      const response = await commerce.cart.add(productId, quantity);
+
+      // Log the response to debug its structure
+      console.log("Response from commerce.cart.add:", response);
+
+      // Ensure the response contains the cart data directly
+      if (response && response.id) {
+        setCart(response);
+      } else {
+        console.error("Cart data not found in the response:", response);
+      }
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+    }
   };
 
   const handleUpdateCartQty = async (productId, quantity) => {
-    const { cart } = await commerce.cart.update(productId, { quantity });
+    const cart = await commerce.cart.update(productId, { quantity });
     setCart(cart);
   };
 
   const handleRemoveFromCart = async (productId) => {
-    const { cart } = await commerce.cart.remove(productId);
+    const cart = await commerce.cart.remove(productId);
     setCart(cart);
   };
 
   const handleEmptyCart = async () => {
-    const { cart } = await commerce.cart.empty();
+    const cart = await commerce.cart.empty();
     setCart(cart);
   };
 
